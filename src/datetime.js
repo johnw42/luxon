@@ -208,9 +208,9 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOff
 function toTechFormat(dt, format, allowZ = true) {
   return dt.isValid
     ? Formatter.create(Locale.create("en-US"), {
-        allowZ,
-        forceSimple: true,
-      }).formatDateTimeFromString(dt, format)
+      allowZ,
+      forceSimple: true,
+    }).formatDateTimeFromString(dt, format)
     : null;
 }
 
@@ -284,13 +284,13 @@ function toISOTime(
 
 // defaults for unspecified units in the supported calendars
 const defaultUnitValues = {
-    month: 1,
-    day: 1,
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0,
-  },
+  month: 1,
+  day: 1,
+  hour: 0,
+  minute: 0,
+  second: 0,
+  millisecond: 0,
+},
   defaultWeekUnitValues = {
     weekNumber: 1,
     weekday: 1,
@@ -830,8 +830,8 @@ export default class DateTime {
 
     // make sure the values we have are in range
     const higherOrderInvalid = useWeekData
-        ? hasInvalidWeekData(normalized, minDaysInFirstWeek, startOfWeek)
-        : containsOrdinal
+      ? hasInvalidWeekData(normalized, minDaysInFirstWeek, startOfWeek)
+      : containsOrdinal
         ? hasInvalidOrdinalData(normalized)
         : hasInvalidGregorianData(normalized),
       invalid = higherOrderInvalid || hasInvalidTimeData(normalized);
@@ -842,8 +842,8 @@ export default class DateTime {
 
     // compute the actual time
     const gregorian = useWeekData
-        ? weekToGregorian(normalized, minDaysInFirstWeek, startOfWeek)
-        : containsOrdinal
+      ? weekToGregorian(normalized, minDaysInFirstWeek, startOfWeek)
+      : containsOrdinal
         ? ordinalToGregorian(normalized)
         : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
@@ -1012,7 +1012,7 @@ export default class DateTime {
     const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
 
     if (Settings.throwOnInvalid) {
-      throw new InvalidDateTimeError(invalid);
+      this.valid();
     } else {
       return new DateTime({ invalid });
     }
@@ -1478,10 +1478,10 @@ export default class DateTime {
   get weeksInLocalWeekYear() {
     return this.isValid
       ? weeksInWeekYear(
-          this.localWeekYear,
-          this.loc.getMinDaysInFirstWeek(),
-          this.loc.getStartOfWeek()
-        )
+        this.localWeekYear,
+        this.loc.getMinDaysInFirstWeek(),
+        this.loc.getStartOfWeek()
+      )
       : NaN;
   }
 
@@ -1590,9 +1590,9 @@ export default class DateTime {
     const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, this.loc);
 
     const settingWeekStuff =
-        !isUndefined(normalized.weekYear) ||
-        !isUndefined(normalized.weekNumber) ||
-        !isUndefined(normalized.weekday),
+      !isUndefined(normalized.weekYear) ||
+      !isUndefined(normalized.weekNumber) ||
+      !isUndefined(normalized.weekday),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
@@ -1742,8 +1742,8 @@ export default class DateTime {
   endOf(unit, opts) {
     return this.isValid
       ? this.plus({ [unit]: 1 })
-          .startOf(unit, opts)
-          .minus(1)
+        .startOf(unit, opts)
+        .minus(1)
       : this;
   }
 
@@ -1999,6 +1999,17 @@ export default class DateTime {
    */
   toString() {
     return this.isValid ? this.toISO() : INVALID;
+  }
+
+  /**
+   * Returns this DateTime if it valid, otherwise throws an {@link InvalidDateTimeError}.
+   * @returns {DateTime}
+   */
+  toValid() {
+    if (this.invalid) {
+      throw new InvalidDateTimeError(this.invalid);
+    }
+    return this;
   }
 
   /**
@@ -2339,7 +2350,7 @@ export default class DateTime {
     if (!localeToUse.equals(formatParser.locale)) {
       throw new InvalidArgumentError(
         `fromFormatParser called with a locale of ${localeToUse}, ` +
-          `but the format parser was created for ${formatParser.locale}`
+        `but the format parser was created for ${formatParser.locale}`
       );
     }
 

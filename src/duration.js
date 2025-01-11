@@ -18,23 +18,23 @@ const INVALID = "Invalid Duration";
 
 // unit conversion constants
 export const lowOrderMatrix = {
-    weeks: {
-      days: 7,
-      hours: 7 * 24,
-      minutes: 7 * 24 * 60,
-      seconds: 7 * 24 * 60 * 60,
-      milliseconds: 7 * 24 * 60 * 60 * 1000,
-    },
-    days: {
-      hours: 24,
-      minutes: 24 * 60,
-      seconds: 24 * 60 * 60,
-      milliseconds: 24 * 60 * 60 * 1000,
-    },
-    hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
-    minutes: { seconds: 60, milliseconds: 60 * 1000 },
-    seconds: { milliseconds: 1000 },
+  weeks: {
+    days: 7,
+    hours: 7 * 24,
+    minutes: 7 * 24 * 60,
+    seconds: 7 * 24 * 60 * 60,
+    milliseconds: 7 * 24 * 60 * 60 * 1000,
   },
+  days: {
+    hours: 24,
+    minutes: 24 * 60,
+    seconds: 24 * 60 * 60,
+    milliseconds: 24 * 60 * 60 * 1000,
+  },
+  hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
+  minutes: { seconds: 60, milliseconds: 60 * 1000 },
+  seconds: { milliseconds: 1000 },
+},
   casualMatrix = {
     years: {
       quarters: 4,
@@ -287,8 +287,7 @@ export default class Duration {
   static fromObject(obj, opts = {}) {
     if (obj == null || typeof obj !== "object") {
       throw new InvalidArgumentError(
-        `Duration.fromObject: argument expected to be an object, got ${
-          obj === null ? "null" : typeof obj
+        `Duration.fromObject: argument expected to be an object, got ${obj === null ? "null" : typeof obj
         }`
       );
     }
@@ -387,7 +386,7 @@ export default class Duration {
     const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
 
     if (Settings.throwOnInvalid) {
-      throw new InvalidDurationError(invalid);
+      this.toValid();
     } else {
       return new Duration({ invalid });
     }
@@ -606,6 +605,17 @@ export default class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns this Duration if it valid, otherwise throws an {@link InvalidDurationError}.
+   * @returns {Duration}
+   */
+  toValid() {
+    if (this.invalid) {
+      throw new InvalidDurationError(invalid);
+    }
+    return this;
   }
 
   /**

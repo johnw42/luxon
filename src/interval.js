@@ -73,7 +73,7 @@ export default class Interval {
     const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
 
     if (Settings.throwOnInvalid) {
-      throw new InvalidIntervalError(invalid);
+      this.toValid();
     } else {
       return new Interval({ invalid });
     }
@@ -650,6 +650,17 @@ export default class Interval {
       return Duration.invalid(this.invalidReason);
     }
     return this.e.diff(this.s, unit, opts);
+  }
+  
+  /**
+   * Returns this Interval if it valid, otherwise throws an {@link InvalidIntervalError}.
+   * @returns {Interval}
+   */
+  toValid() {
+    if (this.invalid) {
+      throw new InvalidIntervalError(invalid);
+    }
+    return this;
   }
 
   /**
